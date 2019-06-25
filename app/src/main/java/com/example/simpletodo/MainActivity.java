@@ -1,5 +1,6 @@
 package com.example.simpletodo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.commons.io.FileUtils;
@@ -19,6 +21,15 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    // numeric code to identify the edit activity
+    public final static int EDIT_REQUEST_CODE = 20;
+
+    // keys used for passing data between activities
+    public final static String ITEM_TEXT = "itemText";
+    public final static String ITEM_POSITION = "itemPosition";
+
 
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
@@ -85,8 +96,65 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+        // set up listener for edit (regular click)
+
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                // create new activity
+
+                Intent intent = new Intent(MainActivity.this,EditItemActivity.class);
+
+                // pass the data being edited
+
+                intent.putExtra(ITEM_TEXT,items.get(i));
+                intent.putExtra(ITEM_POSITION,i);
+
+
+                // display the activity
+
+                startActivityForResult(intent,EDIT_REQUEST_CODE);
+
+
+
+            }
+        });
+
+
     }
 
+    // handle the results from edit activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // if the edit activity completed is ok
+        if(resultCode == RESULT_OK && requestCode == EDIT_REQUEST_CODE)
+        {
+            // extract the updated item text from result intent extras
+            String updatedItem = data.getExtras().getString(ITEM_TEXT);
+
+            // extract original position of edited text
+            int position = data.getExtras().getInt(ITEM_POSITION);
+
+            // update the model with the new item text at the edited position
+            items.set(position,updatedItem);
+            // notify the adaptor that the data has changed
+            itemsAdapter.notifyDataSetChanged();
+            // persist the changed model
+            writeItems();
+            //notify the user the operation completed ok
+            Toast.makeText(this,"Item updated succesfully",Toast.LENGTH_SHORT).show();
+
+
+
+
+        }
+
+    }
 
     private File getDataFile()
     {
