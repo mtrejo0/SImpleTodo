@@ -42,35 +42,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
+        // read items that already exist in memory
         readItems();
+
+        // define lists of items to display
         itemsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
         lvItems = (ListView) findViewById(R.id.lvItems);
 
         lvItems.setAdapter((itemsAdapter));
 
-//        MOCK DATA
-//        items.add("Moises");
-//        items.add("Trejo");
 
+        // listen for different gestures on list
         setupViewListener();
 
 
 
     }
 
-
+    // get value from text box and add to list structures
     public void onAddItem(View v)
     {
+
+
         EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
 
+        // collect text
         String itemText = etNewItem.getText().toString();
 
+        // add to list
         itemsAdapter.add(itemText);
 
+        // clear text box
         etNewItem.setText("");
+
+        // write vals in memory
         writeItems();
 
+        // notify that item was added correctly
         Toast.makeText(getApplicationContext(), "Item Added to List", Toast.LENGTH_SHORT).show();
 
 
@@ -79,16 +87,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewListener()
     {
+
         Log.d("MainActivity","Setting up listener");
+
+        // listens for Long click on list item
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 Log.d("MainActivity","Removing item at position: "+ i);
+
+                // remove item that was tapped on
                 items.remove(i);
+                // update items adapter bc there was a change
                 itemsAdapter.notifyDataSetChanged();
+
+                // write vals in memory
                 writeItems();
+
+                //notify the user the operation completed ok
+                Toast.makeText(MainActivity.this,"Item removed",Toast.LENGTH_SHORT).show();
 
 
 
@@ -158,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     private File getDataFile()
     {
+        // get all values from todo.txt that stores past values
         return new File(getFilesDir(),"todo.txt");
 
     }
@@ -165,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
     private void readItems(){
 
 
+        // try to read the values from the file if not initialize it to empty list
         try {
             items = new ArrayList<>(org.apache.commons.io.FileUtils.readLines(getDataFile(),Charset.defaultCharset()));
         } catch (IOException e) {
@@ -178,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeItems()
     {
+        // write all list items into memory
         try {
             FileUtils.writeLines(getDataFile(),items);
         } catch (IOException e) {
