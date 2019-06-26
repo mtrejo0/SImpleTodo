@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String ITEM_POSITION = "itemPosition";
 
 
+
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
     ListView lvItems;
@@ -124,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+
+
+
+
+
                 // create new activity
 
                 Intent intent = new Intent(MainActivity.this,EditItemActivity.class);
@@ -142,6 +148,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
+
+
+
+
+
+
 
 
     }

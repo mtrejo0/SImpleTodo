@@ -48,4 +48,14 @@ public class EditItemActivity extends AppCompatActivity {
         // close the activity and redirect to main
         finish();
     }
+
+    public void setItemUrgent(View v){
+
+        String val = etItemText.getText().toString();
+
+        etItemText.setText(val.toUpperCase());
+        onSaveItem(v);
+
+
+    }
 }
